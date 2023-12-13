@@ -1,0 +1,39 @@
+opposite_ident(n) := block(
+    I : ident(n),
+    for i: 1 thru n do(
+    	I[i][i] : 0,
+	I[i][n-i+1] : 1
+    ),
+    return(I)
+)$
+
+gauss_jordan(A,b) := block(
+    n : length(A),
+    aug_A : addcol(A,b),
+    aug_A : echelon(aug_A),
+
+    /* Splitting aug_A again into A_e and B_e */
+    b_e : col(aug_A, n+1),
+    A_e : transpose(rest(transpose(aug_A), -1)),
+
+    /* This will invert a diagonally or to make upper triangle to lower triangle*/
+    O : opposite_ident(n),
+    A_e : O . A_e . O,
+    b_e : O . b_e,
+
+    /* Finally Echeloning the new matrix and getting the solution*/
+    x : echelon(addcol(A_e, b_e)),
+    x : O . x,
+    return(x)
+)$
+
+main() := (
+    /*
+    A : matrix([2,1,-1],[-3,-1,2],[-2,1,2]),
+    b : matrix([8,-11,-3]), */
+    A : matrix([2,3], [4,6]),
+    b : matrix([6,12]),
+    print(gauss_jordan(A,b))
+)$
+
+main();

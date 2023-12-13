@@ -1,0 +1,26 @@
+main() :=
+block(
+A: matrix([2,1,1],[2,1,2],[1,-2,1]),
+b: matrix([7,6,0]),
+n : 3,
+
+aug_A: addcol(A,b),
+aug_A: echelon(aug_A),
+
+sol: zeromatrix(1,n),
+sol[1][n] : aug_A[n][n+1],
+
+/* next_var_val means next-variable-value which can be [y,z] [In three var]*/
+for i: n-1 thru 1 step -1 do(
+    row : rest(aug_A[i],-1),
+    rhs : aug_A[i][n+1],
+    next_var_val : row . sol,
+    next_var_val : rhs - next_var_val,
+    /* print(aug_A,row,sol,next_var_val,rhs), */
+    sol[1][i] : next_var_val
+),
+sol : transpose(sol),
+return(sol)
+)$
+
+print(main());
